@@ -2,8 +2,8 @@ const inquirer = require('inquirer');
 
 class CLI {
     constructor() {
-        this.title = "";
-        this.config = [];
+        this.SVGtitle = '';
+        this.SVGtext = '';
     }
 run() {
     console.log('welcome to SVG-logo-generator!');
@@ -16,7 +16,7 @@ run() {
         },
     ])
     .then(({ name }) => {
-        this.title = name;
+        this.SVGtitle = name;
         return this.addText();
     })
     }
@@ -26,14 +26,42 @@ addText() {
         {
             type: 'input',
             name: 'text',
-            message: 'Please choose a text for the logo.(no more than 3 letters)'
+            message: 'Please input the desired text for the logo.(no more than 3 letters)'
         }
     ])
     .then(({ text }) => {
         if (text.trim().length > 3) {
             console.log('Text input was too long.');
-            return addText();
+            return this.addText();
+        }
+        else if (text === '' || null || 0) {
+            console.log('Text input was left empty.');
+            return this.addText();
+        }
+        else {
+            this.SVGtext = text.trim();
+            return this.addTextColor();
         }
     })
     }
+addTextColor() {
+    return inquirer.prompt([
+        {
+            type: 'input',
+            name: 'textColor',
+            message: 'What color should the text be?(color keyword or hexadecimal number)'
+        }
+    ])
+    .then(({ textColor }) => {
+        const styleList = new Option().style;
+        if (styleList.color == textColor) {
+            return this.addShape();
+        }
+        else {
+            console.log('Input was not an available color.');
+            return this.addTextColor();
+        }
+      
+    })
+}
 }
